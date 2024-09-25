@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:weather_app/controller/Data_fetch_bloc/bloc/weather_data_bloc.dart';
 import 'package:weather_app/controller/Location_bloc/bloc/location_fetch_bloc.dart';
 import 'package:weather_app/utils/styles.dart';
 import 'package:weather_app/views/widgets/bottom_card.dart';
@@ -7,18 +8,36 @@ import 'package:weather_app/views/widgets/glass_card.dart';
 
 class HomeScreenwrpper extends StatelessWidget {
   const HomeScreenwrpper({super.key});
-
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => LocationFetchBloc()..add(LocationFetch()),
+    print("objectsss");
+    return MultiBlocProvider(
+      providers: [
+        // BlocProvider(
+        //   create: (context) => LocationFetchBloc()..add(LocationFetch()),
+        // ),
+        BlocProvider(
+          create: (context) => WeatheDataBloc(),
+        ),
+      ],
       child: HomeScreen(),
     );
   }
 }
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    BlocProvider.of<WeatheDataBloc>(context).add(WeatherDatas());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +45,7 @@ class HomeScreen extends StatelessWidget {
     var screenSize = MediaQuery.of(context).size;
     var screenWidth = screenSize.width;
     var screenHeight = screenSize.height;
-
+    print("sssssssssssssssssss");
     return Scaffold(
       body: Container(
         decoration:
@@ -60,24 +79,33 @@ class HomeScreen extends StatelessWidget {
                 ],
               ),
               SizedBox(height: screenHeight * 0.05), // Responsive spacing
-              Center(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      width:
-                          screenWidth * 0.4, // Image takes 40% of screen width
-                      child: Image.asset(
-                          "assets/412.png"), // Update with your asset name
-                    ),
-                    SizedBox(height: screenHeight * 0.02),
-                    const Text(
-                      "13°C",
-                      style: AppStyles.tempTextStyle,
-                    ),
-                  ],
-                ),
+              BlocBuilder<WeatheDataBloc, WeatheDataState>(
+                builder: (context, state) {
+                  if (state is LoadingFetchingWeather) {
+                    return CircularProgressIndicator();
+                  } else if (state is SuccessfullyFetchedWeather) {
+                    return Center(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            width: screenWidth *
+                                0.4, // Image takes 40% of screen width
+                            child: Image.asset(
+                                "assets/412.png"), // Update with your asset name
+                          ),
+                          SizedBox(height: screenHeight * 0.02),
+                          Text(
+                            "${state.weatherdata.main.temp}°C",
+                            style: AppStyles.tempTextStyle,
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                  return Container();
+                },
               ),
               SizedBox(height: screenHeight * 0.02),
               const Text(

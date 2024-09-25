@@ -5,7 +5,11 @@ sealed class WeatheDataState {}
 
 final class WeatheDataInitial extends WeatheDataState {}
 
-class SuccessfullyFetchedWeather extends WeatheDataState {}
+class SuccessfullyFetchedWeather extends WeatheDataState {
+  final CurrentWeather weatherdata;
+
+  SuccessfullyFetchedWeather({required this.weatherdata});
+}
 
 class LoadingFetchingWeather extends WeatheDataState {}
 

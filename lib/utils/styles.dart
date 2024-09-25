@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class AppStyles {
   // Common TextStyles used throughout the app
   static const TextStyle tempTextStyle = TextStyle(
-    fontSize: 80,
+    fontSize: 50,
     fontWeight: FontWeight.bold,
     color: Colors.white,
   );

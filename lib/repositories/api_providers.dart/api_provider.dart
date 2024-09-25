@@ -9,7 +9,7 @@ class Apiprovider {
   Future<http.Response> weatherdatas() async {
     final response = await http.post(
       Uri.parse(
-          "https://api.openweathermap.org/data/2.5/weather?q=$cityname&appid=${Secrets.apikey}"),
+          "https://api.openweathermap.org/data/2.5/weather?q=$cityname&appid=${Secrets.apikey}&units=metric"),
       headers: {'Content-Type': 'application/json'},
     );
     return response;
