@@ -1,7 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:weather_app/controller/Location_bloc/bloc/location_fetch_bloc.dart';
 import 'package:weather_app/utils/styles.dart';
 import 'package:weather_app/views/widgets/bottom_card.dart';
 import 'package:weather_app/views/widgets/glass_card.dart';
+
+class HomeScreenwrpper extends StatelessWidget {
+  const HomeScreenwrpper({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => LocationFetchBloc()..add(LocationFetch()),
+      child: HomeScreen(),
+    );
+  }
+}
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -15,7 +29,12 @@ class HomeScreen extends StatelessWidget {
 
     return Scaffold(
       body: Container(
-        decoration: AppStyles.gradientBackground,
+        decoration:
+            // const
+            // DecorationImage(
+            //     fit: BoxFit.cover,
+            //     image: AssetImage("assets/misteremil190200032.jpg")))
+            AppStyles.gradientBackground,
         child: Padding(
           padding: EdgeInsets.symmetric(
             horizontal: screenWidth * 0.05, // 5% of screen width
@@ -66,6 +85,17 @@ class HomeScreen extends StatelessWidget {
                 style: AppStyles.weatherDescTextStyle,
               ),
               SizedBox(height: screenHeight * 0.04),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(onPressed: () {}, child: const Text("Today")),
+                  SizedBox(width: screenWidth * 0.04),
+                  ElevatedButton(
+                      onPressed: () {}, child: const Text("Next day")),
+                ],
+              ),
+              SizedBox(height: screenHeight * 0.04),
+
               SizedBox(
                 height: screenHeight *
                     0.15, // ListView height is 15% of screen height
