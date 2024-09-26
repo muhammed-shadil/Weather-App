@@ -27,6 +27,7 @@ class AppStyles {
 
   static const TextStyle subtitle = TextStyle(
     fontSize: 18,
+    color: Colors.white,
     fontWeight: FontWeight.w400,
   );
 

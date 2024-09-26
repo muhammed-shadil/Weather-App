@@ -11,7 +11,7 @@ class WeatherDetails extends StatelessWidget {
 
   final String title;
   final String value;
-  final IconData icon;
+  final String icon;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +25,7 @@ class WeatherDetails extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Icon(icon, color: Colors.white),
+          Container(width: 30, height: 30, child: Image.asset(icon)),
           SizedBox(height: screenWidth * 0.01),
           Text(
             title,

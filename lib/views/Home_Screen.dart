@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:weather_app/controller/Data_fetch_bloc/cubit/temperature_converter_cubit.dart';
 import 'package:weather_app/controller/Data_fetch_bloc/current_weather/weather_data_bloc.dart';
 import 'package:weather_app/controller/Data_fetch_bloc/forecast/forecast_weather_bloc.dart';
 import 'package:weather_app/controller/Location_bloc/bloc/location_fetch_bloc.dart';
-import 'package:weather_app/models/forecastWeather.dart';
+import 'package:weather_app/controller/searchBloc/bloc/search_bar_bloc.dart';
+import 'package:weather_app/utils/commen_functions.dart';
 import 'package:weather_app/utils/constants.dart';
 import 'package:weather_app/utils/icons.dart';
 import 'package:weather_app/utils/styles.dart';
@@ -19,6 +21,9 @@ class HomeScreenwrpper extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
+          create: (context) => TemperatureConverterCubit(),
+        ),
+        BlocProvider(
           create: (context) => ForecastWeatherBloc(),
         ),
         BlocProvider(
@@ -26,6 +31,9 @@ class HomeScreenwrpper extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => WeatheDataBloc(),
+        ),
+        BlocProvider(
+          create: (context) => SearchBarBloc(), // Added SearchBarBloc
         ),
       ],
       child: HomeScreen(),
@@ -99,45 +107,59 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ],
                 ),
-                SizedBox(height: screenHeight * 0.02), // Responsive spacing
-                BlocBuilder<WeatheDataBloc, WeatheDataState>(
-                  builder: (context, state) {
-                    if (state is LoadingFetchingWeather) {
-                      return const CircularProgressIndicator();
-                    } else if (state is SuccessfullyFetchedWeather) {
-                      return Center(
-                        child: Column(
-                          children: [
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
+                // SizedBox(height: screenHeight * 0.02), // Responsive spacing
+                BlocBuilder<TemperatureConverterCubit, TempUnit>(
+                  builder: (context, unit) {
+                    return BlocBuilder<WeatheDataBloc, WeatheDataState>(
+                      builder: (context, state) {
+                        if (state is LoadingFetchingWeather) {
+                          return const CircularProgressIndicator();
+                        } else if (state is SuccessfullyFetchedWeather) {
+                          double currentTemp = CommenFunctions.convertTemp(
+                              state.weatherdata.main.temp, unit);
+                          return Center(
+                            child: Column(
                               children: [
-                                SizedBox(
-                                    width: screenWidth *
-                                        0.4, // Image takes 40% of screen width
-                                    child: Image(
-                                        image: AssetImage(AppIcons.icons[state
-                                            .weatherdata
-                                            .weather[0]
-                                            .main])) // Update with your asset name
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                        width: screenWidth *
+                                            0.4, // Image takes 40% of screen width
+                                        child: Image(
+                                            height: 150,
+                                            width: 150,
+                                            fit: BoxFit.cover,
+                                            image: AssetImage(
+                                              AppIcons.icons[state
+                                                  .weatherdata.weather[0].main],
+                                            )) // Update with your asset name
+                                        ),
+                                    // SizedBox(height: screenHeight * 0.02),
+                                    InkWell(
+                                      onTap: () => context
+                                          .read<TemperatureConverterCubit>()
+                                          .toggleUnit(),
+                                      child: Text(
+                                        "${currentTemp.toStringAsFixed(0)}°${unit == TempUnit.celsius ? 'C' : 'F'}",
+                                        style: AppStyles.tempTextStyle,
+                                      ),
                                     ),
+                                  ],
+                                ),
                                 SizedBox(height: screenHeight * 0.02),
                                 Text(
-                                  "${state.weatherdata.main.temp.toStringAsFixed(0)}°C",
-                                  style: AppStyles.tempTextStyle,
+                                  "${state.weatherdata.weather[0].description}- H:${state.weatherdata.main.tempMax.toStringAsFixed(2)}° L:${state.weatherdata.main.tempMin.toStringAsFixed(2)}°",
+                                  style: AppStyles.weatherDescTextStyle,
                                 ),
                               ],
                             ),
-                            SizedBox(height: screenHeight * 0.02),
-                            Text(
-                              "${state.weatherdata.weather[0].description}- H:${state.weatherdata.main.tempMax.toStringAsFixed(2)}° L:${state.weatherdata.main.tempMin.toStringAsFixed(2)}°",
-                              style: AppStyles.weatherDescTextStyle,
-                            ),
-                          ],
-                        ),
-                      );
-                    }
-                    return Container();
+                          );
+                        }
+                        return Container();
+                      },
+                    );
                   },
                 ),
 
@@ -167,7 +189,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           scrollDirection: Axis.horizontal,
                           itemCount: list.length,
                           itemBuilder: (BuildContext context, int index) {
-                            // Convert the date to a 12-hour format
                             DateTime dateTime =
                                 DateTime.parse(list[index].dtTxt);
                             String formattedTime = DateFormat.jm()
@@ -190,8 +211,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 SizedBox(height: screenHeight * 0.04),
                 Container(
+                  margin: const EdgeInsets.all(7),
                   padding: EdgeInsets.symmetric(
-                    horizontal: screenWidth * 0.05,
+                    horizontal: screenWidth * 0.03,
                     vertical: screenHeight * 0.03,
                   ),
                   decoration: BoxDecoration(
@@ -211,15 +233,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                 WeatherDetails(
                                     title: "Windspeed",
                                     value: "${state.weatherdata.wind.speed}",
-                                    icon: Icons.wb_sunny),
+                                    icon: "assets/images-removebg-preview.png"),
                                 WeatherDetails(
                                     title: "Humidity",
                                     value: "${state.weatherdata.main.humidity}",
-                                    icon: Icons.wb_sunny),
+                                    icon: "assets/dd-removebg-preview.png"),
                                 WeatherDetails(
                                     title: "Pressure",
                                     value: "${state.weatherdata.main.pressure}",
-                                    icon: Icons.wb_sunny),
+                                    icon:
+                                        "assets/images__1_-removebg-preview.png"),
                               ],
                             ),
                           ],
