@@ -43,8 +43,8 @@ class LocationFetchBloc extends Bloc<LocationFetchEvent, LocationFetchState> {
       List<Placemark> placeMark = await placemarkFromCoordinates(
           currentposition.latitude, currentposition.longitude);
 
-      currentplace = placeMark[0].locality.toString();
-      print(currentplace);
+      currentplace = placeMark[1].locality.toString();
+
       emit(SuccessfullyFetched(currentplace: currentplace));
     } catch (e) {
       emit(ErrorfetchingLocation(message: e.toString()));

@@ -21,11 +21,11 @@ class WeatherDetails extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
         border: Border.all(color: Colors.white),
-        color: Color.fromARGB(255, 71, 99, 191),
+        color: const Color.fromARGB(255, 71, 99, 191),
       ),
       child: Column(
         children: [
-          Container(width: 30, height: 30, child: Image.asset(icon)),
+          SizedBox(width: 30, height: 30, child: Image.asset(icon)),
           SizedBox(height: screenWidth * 0.01),
           Text(
             title,

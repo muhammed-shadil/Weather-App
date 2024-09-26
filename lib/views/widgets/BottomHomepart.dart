@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:weather_app/controller/Data_fetch_bloc/current_weather/weather_data_bloc.dart';
 import 'package:weather_app/views/widgets/bottom_card.dart';
+import 'package:weather_app/views/widgets/shimmers/bottomHomeshimmer.dart';
 
 class BottomPartHome extends StatelessWidget {
   const BottomPartHome({
@@ -28,7 +29,8 @@ class BottomPartHome extends StatelessWidget {
       child: BlocBuilder<WeatheDataBloc, WeatheDataState>(
         builder: (context, state) {
           if (state is LoadingFetchingWeather) {
-            return const CircularProgressIndicator();
+            return BottomHomeshimmer(
+                screenWidth: screenWidth, screenHeight: screenHeight);
           } else if (state is SuccessfullyFetchedWeather) {
             return Column(
               children: [

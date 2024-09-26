@@ -1,5 +1,4 @@
 import 'package:http/http.dart' as http;
-import 'package:weather_app/controller/Data_fetch_bloc/forecast/forecast_weather_bloc.dart';
 import 'package:weather_app/repositories/api_providers.dart/api_provider.dart';
 
 class Apirepository {

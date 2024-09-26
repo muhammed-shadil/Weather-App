@@ -1,20 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 import 'package:weather_app/controller/Data_fetch_bloc/cubit/temperature_converter_cubit.dart';
 import 'package:weather_app/controller/Data_fetch_bloc/current_weather/weather_data_bloc.dart';
 import 'package:weather_app/controller/Data_fetch_bloc/forecast/forecast_weather_bloc.dart';
 import 'package:weather_app/controller/Location_bloc/bloc/location_fetch_bloc.dart';
 import 'package:weather_app/controller/searchBloc/bloc/search_bar_bloc.dart';
-import 'package:weather_app/utils/commen_functions.dart';
 import 'package:weather_app/utils/constants.dart';
-import 'package:weather_app/utils/icons.dart';
 import 'package:weather_app/utils/styles.dart';
-import 'package:weather_app/views/screens/BottomHomepart.dart';
-import 'package:weather_app/views/screens/ForecastHomepart.dart';
-import 'package:weather_app/views/screens/StartHomepart.dart';
-import 'package:weather_app/views/widgets/bottom_card.dart';
-import 'package:weather_app/views/widgets/glass_card.dart';
+import 'package:weather_app/views/widgets/BottomHomepart.dart';
+import 'package:weather_app/views/widgets/ForecastHomepart.dart';
+import 'package:weather_app/views/widgets/StartHomepart.dart';
 
 class HomeScreenwrpper extends StatelessWidget {
   const HomeScreenwrpper({super.key});

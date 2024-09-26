@@ -5,6 +5,7 @@ import 'package:weather_app/controller/Data_fetch_bloc/current_weather/weather_d
 import 'package:weather_app/utils/commen_functions.dart';
 import 'package:weather_app/utils/icons.dart';
 import 'package:weather_app/utils/styles.dart';
+import 'package:weather_app/views/widgets/shimmers/startHomeshimmer.dart';
 
 class StartHomepart extends StatelessWidget {
   const StartHomepart({
@@ -23,7 +24,7 @@ class StartHomepart extends StatelessWidget {
         return BlocBuilder<WeatheDataBloc, WeatheDataState>(
           builder: (context, state) {
             if (state is LoadingFetchingWeather) {
-              return const CircularProgressIndicator();
+              return const startHomeshimmer();
             } else if (state is SuccessfullyFetchedWeather) {
               double currentTemp = CommenFunctions.convertTemp(
                   state.weatherdata.main.temp, unit);

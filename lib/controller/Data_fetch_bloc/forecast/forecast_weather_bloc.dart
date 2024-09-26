@@ -24,10 +24,9 @@ class ForecastWeatherBloc
       final Response response =
           await apirepository.forcastWeather(event.cityname);
       final result = jsonDecode(response.body);
-      print(response.statusCode);
+
       if (response.statusCode == 200) {
         forecastWeather = ForecastWeatherModel.fromMap(result);
-        print(forecastWeather.city.name);
 
         emit(SuccessfullyForecastWeather(forecastdata: forecastWeather));
       } else {

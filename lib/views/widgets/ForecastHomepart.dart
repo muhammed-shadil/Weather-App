@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:weather_app/controller/Data_fetch_bloc/forecast/forecast_weather_bloc.dart';
 import 'package:weather_app/utils/icons.dart';
 import 'package:weather_app/views/widgets/glass_card.dart';
+import 'package:weather_app/views/widgets/shimmers/forecastHomeshimmer.dart';
 
 class ForecastHomePart extends StatelessWidget {
   const ForecastHomePart({
@@ -15,12 +16,14 @@ class ForecastHomePart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var screenWidth = MediaQuery.of(context).size.width;
+
     return SizedBox(
       height: screenHeight * 0.15,
       child: BlocBuilder<ForecastWeatherBloc, ForecastWeatherState>(
         builder: (context, state) {
           if (state is LoadingForecastWeather) {
-            return const CircularProgressIndicator();
+            return ForecastHomeshimmer(screenWidth: screenWidth);
           } else if (state is SuccessfullyForecastWeather) {
             final list = state.forecastdata.list;
 

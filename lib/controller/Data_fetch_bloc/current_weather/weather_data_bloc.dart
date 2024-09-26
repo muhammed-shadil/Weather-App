@@ -19,16 +19,15 @@ class WeatheDataBloc extends Bloc<WeatherDataEvent, WeatheDataState> {
 
   FutureOr<void> weatherdata(
       WeatherDatas event, Emitter<WeatheDataState> emit) async {
-    print("ffffffffffffff");
     emit(LoadingFetchingWeather());
     CurrentWeather weatherdata;
     try {
       final Response response = await apirepository.weatherdata(event.cityname);
       final result = jsonDecode(response.body);
-      print(response.statusCode);
+
       if (response.statusCode == 200) {
         weatherdata = CurrentWeather.fromMap(result);
-        print(weatherdata.name);
+
         emit(SuccessfullyFetchedWeather(weatherdata: weatherdata));
       } else {
         emit(ErrorfetchingWeather(message: "message"));

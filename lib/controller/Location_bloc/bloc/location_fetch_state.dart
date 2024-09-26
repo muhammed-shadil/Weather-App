@@ -4,6 +4,7 @@ part of 'location_fetch_bloc.dart';
 sealed class LocationFetchState {}
 
 final class LocationFetchInitial extends LocationFetchState {}
+
 class SuccessfullyFetched extends LocationFetchState {
   final String currentplace;
 
