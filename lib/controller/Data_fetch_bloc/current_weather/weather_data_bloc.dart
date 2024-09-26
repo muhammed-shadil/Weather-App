@@ -23,7 +23,7 @@ class WeatheDataBloc extends Bloc<WeatherDataEvent, WeatheDataState> {
     emit(LoadingFetchingWeather());
     CurrentWeather weatherdata;
     try {
-      final Response response = await apirepository.weatherdata();
+      final Response response = await apirepository.weatherdata(event.cityname);
       final result = jsonDecode(response.body);
       print(response.statusCode);
       if (response.statusCode == 200) {

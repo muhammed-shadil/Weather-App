@@ -13,7 +13,7 @@ class GlassForecastCard extends StatelessWidget {
 
   final String time;
   final String temp;
-  final IconData icon;
+  final String icon;
 
   @override
   Widget build(BuildContext context) {
@@ -43,8 +43,10 @@ class GlassForecastCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(time, style: AppStyles.subtitle.copyWith(fontSize: 14)),
-                  Icon(icon,
-                      size: AppStyles.forecastIconSize, color: Colors.white),
+                  Image.asset(
+                    icon,
+                    scale: 1.3,
+                  ),
                   Text(temp, style: AppStyles.forecastTemperature),
                 ],
               ),

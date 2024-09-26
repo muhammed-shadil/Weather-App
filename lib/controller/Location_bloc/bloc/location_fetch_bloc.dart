@@ -1,10 +1,8 @@
 import 'dart:async';
-
 import 'package:bloc/bloc.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:meta/meta.dart';
-
 part 'location_fetch_event.dart';
 part 'location_fetch_state.dart';
 
@@ -46,6 +44,7 @@ class LocationFetchBloc extends Bloc<LocationFetchEvent, LocationFetchState> {
           currentposition.latitude, currentposition.longitude);
 
       currentplace = placeMark[0].locality.toString();
+      print(currentplace);
       emit(SuccessfullyFetched(currentplace: currentplace));
     } catch (e) {
       emit(ErrorfetchingLocation(message: e.toString()));
