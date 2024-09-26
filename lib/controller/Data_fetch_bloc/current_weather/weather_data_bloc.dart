@@ -28,7 +28,7 @@ class WeatheDataBloc extends Bloc<WeatherDataEvent, WeatheDataState> {
       print(response.statusCode);
       if (response.statusCode == 200) {
         weatherdata = CurrentWeather.fromMap(result);
-        print(weatherdata.clouds.all);
+        print(weatherdata.name);
         emit(SuccessfullyFetchedWeather(weatherdata: weatherdata));
       } else {
         emit(ErrorfetchingWeather(message: "message"));

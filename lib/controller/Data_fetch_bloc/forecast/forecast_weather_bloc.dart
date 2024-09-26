@@ -27,7 +27,8 @@ class ForecastWeatherBloc
       print(response.statusCode);
       if (response.statusCode == 200) {
         forecastWeather = ForecastWeatherModel.fromMap(result);
-       
+        print(forecastWeather.city.name);
+
         emit(SuccessfullyForecastWeather(forecastdata: forecastWeather));
       } else {
         emit(ErrorForecastWeather(message: "message"));

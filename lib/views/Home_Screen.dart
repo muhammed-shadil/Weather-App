@@ -49,65 +49,124 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  TextEditingController _searchController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
+    // Fetch weather and forecast for current location initially
     BlocProvider.of<LocationFetchBloc>(context).add(LocationFetch());
+  }
+
+  // Function to trigger weather fetching for the searched city
+  void _searchCityWeather(BuildContext context) {
+    print(_searchController.text);
+    if (_searchController.text.isNotEmpty) {
+      BlocProvider.of<ForecastWeatherBloc>(context)
+          .add(ForcastWeather(cityname: _searchController.text));
+      BlocProvider.of<WeatheDataBloc>(context)
+          .add(WeatherDatas(cityname: _searchController.text));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    // Get the screen width and height
     var screenSize = MediaQuery.of(context).size;
     var screenWidth = screenSize.width;
     var screenHeight = screenSize.height;
-    print("sssssssssssssssssss");
+
     return Scaffold(
       body: SafeArea(
         child: Container(
           height: screenHeight,
-          decoration:
-              // const
-              // DecorationImage(
-              //     fit: BoxFit.cover,
-              //     image: AssetImage("assets/misteremil190200032.jpg")))
-              AppStyles.gradientBackground,
+          decoration: AppStyles.gradientBackground,
           child: SingleChildScrollView(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                AppSpaces.h20,
-                BlocBuilder<LocationFetchBloc, LocationFetchState>(
-                  builder: (context, state) {
-                    if (state is SuccessfullyFetched) {
-                      BlocProvider.of<WeatheDataBloc>(context)
-                          .add(WeatherDatas(cityname: state.currentplace));
-                      BlocProvider.of<ForecastWeatherBloc>(context)
-                          .add(ForcastWeather(cityname: state.currentplace));
-                      return Text(
-                        state.currentplace,
-                        style: AppStyles.cityTextStyle,
-                      );
-                    }
-                    return const Text(
-                      "Feiching....",
-                      style: AppStyles.cityTextStyle,
-                    );
-                  },
+                // Top Bar with Search Icon and Location Text
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.03),
+                  child: Row(
+                    children: [
+                      // Search Icon
+                      IconButton(
+                        icon: const Icon(Icons.search, color: Colors.white),
+                        onPressed: () {
+                          BlocProvider.of<SearchBarBloc>(context)
+                              .add(ToggleSearchBar());
+                        },
+                      ),
+                      // BlocBuilder for SearchBar visibility
+                      BlocBuilder<SearchBarBloc, SearchBarState>(
+                        builder: (context, state) {
+                          if (state is SearchBarVisible) {
+                            return Expanded(
+                              child: Container(
+                                height: 40,
+                                alignment: Alignment.centerLeft,
+                                margin: EdgeInsets.only(left: 10),
+                                child: TextField(
+                                  controller: _searchController,
+                                  decoration: const InputDecoration(
+                                    hintText: "Search city",
+                                    hintStyle: TextStyle(color: Colors.white54),
+                                    border: InputBorder.none,
+                                    focusedBorder: UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.white),
+                                    ),
+                                    enabledBorder: UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.white54),
+                                    ),
+                                  ),
+                                  style: const TextStyle(color: Colors.white),
+                                  onSubmitted: (value) =>
+                                      _searchCityWeather(context),
+                                ),
+                              ),
+                            );
+                          } else {
+                            // Show Current Location when search bar is hidden
+                            return Expanded(
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: BlocBuilder<LocationFetchBloc,
+                                    LocationFetchState>(
+                                  builder: (context, state) {
+                                    if (state is SuccessfullyFetched) {
+                                      // Fetch weather and forecast for current location
+                                      BlocProvider.of<WeatheDataBloc>(context)
+                                          .add(WeatherDatas(
+                                              cityname: state.currentplace));
+                                      BlocProvider.of<ForecastWeatherBloc>(
+                                              context)
+                                          .add(ForcastWeather(
+                                              cityname: state.currentplace));
+
+                                      return Text(
+                                        state.currentplace,
+                                        style: AppStyles.cityTextStyle,
+                                      );
+                                    }
+                                    return const Text(
+                                      "Fetching...",
+                                      style: AppStyles.cityTextStyle,
+                                    );
+                                  },
+                                ),
+                              ),
+                            );
+                          }
+                        },
+                      ),
+                    ],
+                  ),
                 ),
+
                 SizedBox(height: screenHeight * 0.01), // Responsive spacing
-                const Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.location_on, color: Colors.white),
-                    Text(
-                      "Current Location",
-                      style: AppStyles.smallDetailTextStyle,
-                    ),
-                  ],
-                ),
-                // SizedBox(height: screenHeight * 0.02), // Responsive spacing
+
+                // Weather details for current location or searched city
                 BlocBuilder<TemperatureConverterCubit, TempUnit>(
                   builder: (context, unit) {
                     return BlocBuilder<WeatheDataBloc, WeatheDataState>(
@@ -125,18 +184,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     SizedBox(
-                                        width: screenWidth *
-                                            0.4, // Image takes 40% of screen width
-                                        child: Image(
-                                            height: 150,
-                                            width: 150,
-                                            fit: BoxFit.cover,
-                                            image: AssetImage(
-                                              AppIcons.icons[state
-                                                  .weatherdata.weather[0].main],
-                                            )) // Update with your asset name
+                                      width: screenWidth * 0.4,
+                                      child: Image(
+                                        height: 150,
+                                        width: 150,
+                                        fit: BoxFit.cover,
+                                        image: AssetImage(
+                                          AppIcons.icons[state
+                                              .weatherdata.weather[0].main],
                                         ),
-                                    // SizedBox(height: screenHeight * 0.02),
+                                      ),
+                                    ),
                                     InkWell(
                                       onTap: () => context
                                           .read<TemperatureConverterCubit>()
@@ -151,6 +209,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                 SizedBox(height: screenHeight * 0.02),
                                 Text(
                                   "${state.weatherdata.weather[0].description}- H:${state.weatherdata.main.tempMax.toStringAsFixed(2)}° L:${state.weatherdata.main.tempMin.toStringAsFixed(2)}°",
+                                  style: AppStyles.weatherDescTextStyle,
+                                ),
+                                Text(
+                                  "${state.weatherdata.name}- H:${state.weatherdata.main.tempMax.toStringAsFixed(2)}° L:${state.weatherdata.main.tempMin.toStringAsFixed(2)}°",
                                   style: AppStyles.weatherDescTextStyle,
                                 ),
                               ],
